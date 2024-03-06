@@ -4,13 +4,11 @@ import torch.nn as nn
 from gymnasium import Env
 
 
-class Network(nn.Module):
-    def __init__(self, env: Env):
+class DQN(nn.Module):
+    def __init__(self, in_channels, num_actions):
         super().__init__()
-        in_features = int(np.prod(env.observation_space.shape))
-
         self.net = nn.Sequential(
-            nn.Linear(in_features, 64), nn.Tanh(), nn.Linear(64, env.action_space.n)
+            nn.Linear(in_channels, 64), nn.Tanh(), nn.Linear(64, num_actions)
         )
 
     def forward(self, x) -> torch.Tensor:
