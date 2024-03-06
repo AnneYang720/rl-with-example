@@ -16,9 +16,10 @@ class Network(nn.Module):
     def forward(self, x) -> torch.Tensor:
         return self.net(x)
 
-    def act(self, obs):
-        obs_tensor = torch.as_tensor(obs, dtype=torch.float32)  # ?
-        q_values = self(obs_tensor.unsqueeze(0))  # ?
-        max_q_index = torch.argmax(q_values, dim=1)[0]  # ?
-        action = max_q_index.detach().item()  # ?
+    def act(self, obs) -> int:
+        if not isinstance(obs, torch.Tensor):
+            obs = torch.as_tensor(obs, dtype=torch.float32)
+
+        q_values = self(obs.unsqueeze(0))
+        action = torch.argmax(q_values, dim=1).item()
         return action

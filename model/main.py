@@ -6,7 +6,8 @@ import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
-from policy import Network
+
+from model.dqn import Network
 
 GAMMA = 0.99
 MINI_BATCH_SIZE = 32
@@ -41,7 +42,7 @@ for _ in range(10):
     memory = (observation, action, reward, terminated, observation_)
     replay_buffer.append(memory)
     observation = observation_
-    
+
     if terminated:
         break
 
@@ -92,13 +93,15 @@ for step in itertools.count():
 
     all_obs_tensor = torch.as_tensor(all_obs, dtype=torch.float32)
     all_a_tensor = torch.as_tensor(all_a, dtype=torch.int64).unsqueeze(-1)
-    all_r_tensor = torch.as_tensor(all_r, dtype=torch.float32).unsqueeze(-1) # [batch, 1]
+    all_r_tensor = torch.as_tensor(all_r, dtype=torch.float32).unsqueeze(
+        -1
+    )  # [batch, 1]
     all_done_tensor = torch.as_tensor(all_done, dtype=torch.float32).unsqueeze(-1)
-    all_obs__tensor = torch.as_tensor(all_obs_, dtype=torch.float32) # [batch, 4]
+    all_obs__tensor = torch.as_tensor(all_obs_, dtype=torch.float32)  # [batch, 4]
 
     # Compute Targets
-    target_q_values = target_net(all_obs__tensor) # [batch, 2]
-    max_target_q_values = target_q_values.max(dim=1, keepdim=True)[0] # [batch, 1]
+    target_q_values = target_net(all_obs__tensor)  # [batch, 2]
+    max_target_q_values = target_q_values.max(dim=1, keepdim=True)[0]  # [batch, 1]
     targets = all_r_tensor + GAMMA * (1 - all_done_tensor) * max_target_q_values
 
     # Compute Loss
@@ -123,5 +126,3 @@ for step in itertools.count():
         print("Step: {}".format(step))
         print("Avg reward: {}".format(np.mean(reward_buffer)))
         torch.save(online_net.state_dict(), "dqn_model_{}.pth".format(step))
-    
-    break
