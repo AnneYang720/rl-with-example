@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from model.dqn import Network
+from model.dqn import DQN
 
 GAMMA = 0.99
 MINI_BATCH_SIZE = 32
@@ -25,8 +25,8 @@ reward_buffer = deque([0.0], maxlen=100)
 
 episode_reward = 0.0
 
-online_net = Network(env)
-target_net = Network(env)
+online_net = DQN(env)
+target_net = DQN(env)
 
 state_dict = torch.load("dqn_model_1000.pth")
 online_net.load_state_dict(state_dict)
