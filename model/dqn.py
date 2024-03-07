@@ -21,3 +21,20 @@ class DQN(nn.Module):
         q_values = self(obs.unsqueeze(0))
         action = torch.argmax(q_values, dim=1).item()
         return action
+
+class Dueling_DQN(nn.Module):
+    def __init__(self, in_channels, num_actions):
+        super(Dueling_DQN, self).__init__()
+
+        self.netA = nn.Sequential(
+            nn.Linear(in_channels, 64), nn.Tanh(), nn.Linear(64, num_actions)
+        )
+        self.netV = nn.Sequential(
+            nn.Linear(in_channels, 64), nn.Tanh(), nn.Linear(64, 1)
+        )
+
+    def forward(self, x):
+        advantage = self.netA(x)
+        value = self.netV(x)
+        q_values = value + advantage - advantage.mean()
+        return q_values
