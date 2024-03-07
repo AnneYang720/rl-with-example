@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-import gym
+import gymnasium as gym
 import matplotlib.pyplot as plt
 
 
@@ -53,7 +53,7 @@ class Agent:
             for _ in range(num_traj):
                 rewards = []
                 log_probs = []
-                s = env.reset()
+                s,_ = env.reset()
                 done = False
                 while not done:
                     s = torch.FloatTensor([s]).cuda()
@@ -64,10 +64,10 @@ class Agent:
                     u = np.random.choice(vec, 1, replace=False, p=a2[0])
                     log_probs.append(a[0][u])
                     del a
-                    sp, r, done, _ = env.step(u[0])
-                    if done:
-                        if len(rewards) < 50:
-                            r = -200
+                    sp, r, done, _, _ = env.step(u[0])
+                    # if done:
+                    #     if len(rewards) < 50:
+                    #         r = -200
                     ITER_REW += r
                     rewards.append(r)
                     # env.render()
@@ -107,8 +107,9 @@ class Agent:
                 for i, reward in enumerate(temp):
                     r_t += gamma**i * reward
                 # for t_d in range(t, len(trajectory)):
-                #     r_t += gamma ** (t_d - t) * trajectory['rewards'][t_d]
-                # advantage += torch.FloatTensor([r_t]).cuda() - self.baseline(trajectory[t]['s'])[0]
+                    # r_t += gamma ** (t_d - t) * trajectory['rewards'][t_d]
+                # print(trajectory[t]['s'])
+                # advantage = torch.FloatTensor([r_t]).cuda() - self.baseline(trajectory[t]['s'])[0]
                 advantage = torch.FloatTensor([r_t]).cuda()
                 loss += -log_prob * advantage
                 # loss.backward()
