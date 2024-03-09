@@ -58,12 +58,14 @@ class Agent:
                 while not done:
                     s = torch.FloatTensor([s]).cuda()
                     a = self.policy_net(s)
+                    
                     del s
                     a2 = a.detach().cpu().numpy()
                     vec = [0, 1]
                     u = np.random.choice(vec, 1, replace=False, p=a2[0])
                     log_probs.append(a[0][u])
                     del a
+                    # print(u[0])
                     sp, r, done, _, _ = env.step(u[0])
                     # if done:
                     #     if len(rewards) < 50:

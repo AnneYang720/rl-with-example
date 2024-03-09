@@ -38,3 +38,12 @@ class Dueling_DQN(nn.Module):
         value = self.netV(x)
         q_values = value + advantage - advantage.mean()
         return q_values
+    
+    def act(self, obs) -> int:
+        if not isinstance(obs, torch.Tensor):
+            obs = torch.as_tensor(obs, dtype=torch.float32)
+
+        q_values = self(obs.unsqueeze(0))
+        action = torch.argmax(q_values, dim=1).item()
+        return action
+    

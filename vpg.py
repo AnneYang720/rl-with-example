@@ -51,7 +51,7 @@ def compute_returns(rewards):
     return returns
 
 # 训练模型
-for i in range(100):  # 可以根据需要更改训练次数
+for i in range(1):  # 可以根据需要更改训练次数
     logits_list, values_list, rewards_list, actions_list = [], [], [], []
     state, _ = env.reset()
 
@@ -69,7 +69,9 @@ for i in range(100):  # 可以根据需要更改训练次数
         actions_list.append(action)
 
         if done:
+            print(rewards_list)
             returns = compute_returns(rewards_list) # 
+            print(len(returns))
             advantage = torch.tensor(returns) - torch.cat(values_list)
             log_prob = F.log_softmax(torch.stack(logits_list), dim=1)
             # print(log_prob.gather(1, torch.stack(actions_list)).squeeze().shape)
