@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 import torch.nn.functional as F
 import gymnasium as gym
-from model import PolicyNetwork, ValueNetwork
+from .model import PolicyNetwork, ValueNetwork
 
 class PPOAgent(object):
     def __init__(self, env_name:str, gamma:float, lam:float, epsilon:float):
